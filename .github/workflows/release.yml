@@ -7,7 +7,14 @@ on:
       - rc
       - beta
       - alpha
+    paths:
+      - '**/*.tf'
+      - '.github/workflows/release.yml'
   workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
   release:
