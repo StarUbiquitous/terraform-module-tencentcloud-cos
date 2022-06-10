@@ -4,9 +4,14 @@ locals {
 }
 
 resource "tencentcloud_cos_bucket" "bucket" {
-  bucket = var.bucket
-  acl    = var.acl
-  multi_az = var.multi_az
+  bucket            = var.bucket
+  acl               = var.acl
+  log_enable        = var.log_enable
+  log_prefix        = var.log_prefix
+  log_target_bucket = var.log_target_bucket
+
+  encryption_algorithm = var.encryption_algorithm
+
   versioning_enable = var.versioning_enable
 
   dynamic "cors_rules" {
