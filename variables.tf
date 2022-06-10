@@ -50,6 +50,6 @@ variable "cors_rules" {
 }
 
 variable "lifecycle_rules" {
-  default     = {}
+  default     = []
   description = "The lifecycle rules to apply to the bucket"
 }

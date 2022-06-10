@@ -15,28 +15,48 @@ resource "tencentcloud_cos_bucket" "bucket" {
   versioning_enable = var.versioning_enable
 
   dynamic "cors_rules" {
-    for_each = local.cors_rules.allowed_headers
+    for_each = lookup(local.cors_rules, "allowed_headers", [])
     content {
-      allowed_origins = try(local.cors_rules.allowed_origins, null)
-      allowed_methods = try(local.cors_rules.allowed_methods, null)
-      allowed_headers = try(local.cors_rules.allowed_headers, null)
-      expose_headers  = try(local.cors_rules.expose_headers, null)
-      max_age_seconds = try(local.cors_rules.max_age_seconds, null)
+      allowed_origins = lookup(local.cors_rules, "allowed_origins", ["*"])
+      allowed_methods = lookup(local.cors_rules, "allowed_methods", [
+        "PUT",
+        "GET",
+        "POST",
+        "DELETE",
+        "HEAD",
+      ])
+      allowed_headers = lookup(local.cors_rules, "allowed_headers", ["*"])
+      expose_headers = lookup(local.cors_rules, "expose_headers", [
+        "ETag",
+        "Content-Length",
+        "x-cos-request-id",
+      ])
+      max_age_seconds = lookup(local.cors_rules, "max_age_seconds", 600)
     }
   }
 
   dynamic "lifecycle_rules" {
-    for_each = local.lifecycle_rules
+    for_each = length(local.lifecycle_rules) == 0 ? [] : local.lifecycle_rules
     content {
-      filter_prefix = try(local.lifecycle_rules.filter_prefix, null)
+      filter_prefix = lookup(lifecycle_rules.value, "filter_prefix", "*")
 
-      transition {
-        date          = try(local.lifecycle_rules.transition.date, null)
-        storage_class = try(local.lifecycle_rules.transition.storage_class, null)
+      dynamic "transition" {
+        for_each = lookup(lifecycle_rules.value, "transition", [])
+        content {
+
+          days = lookup(lifecycle_rules.value.transition, "days", "")
+
+          storage_class = lookup(lifecycle_rules.value.transition, "storage_class", "STANDARD")
+        }
       }
 
-      expiration {
-        days = try(local.lifecycle_rules.expiration.days, null)
+      dynamic "expiration" {
+        for_each = lookup(lifecycle_rules.value, "expiration", [])
+        content {
+
+          date = lookup(lifecycle_rules.value.expiration, "days", "")
+
+        }
       }
     }
   }
