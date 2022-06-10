@@ -3,7 +3,8 @@
     "+([0-9])?(.{+([0-9]),x}).x",
     "main",
     {
-      "name": "rc"
+      "name": "rc",
+      "prerelease": true
     },
     {
       "name": "beta",
@@ -39,6 +40,33 @@
         "preset": "angular",
         "parserOpts": {
           "noteKeywords": ["BREAKING CHANGE", "BREAKING CHANGES", "BREAKING"]
+        },
+        "presetConfig": {
+          "types": [
+            {
+              "type": "feat",
+              "section": "Features"
+            },
+            {
+              "type": "fix",
+              "section": "Bug Fixes"
+            },
+            {
+              "type": "chore",
+              "section": "Internal",
+              "hidden": false
+            },
+            {
+              "type": "refactor",
+              "section": "Internal",
+              "hidden": false
+            },
+            {
+              "type": "perf",
+              "section": "Internal",
+              "hidden": false
+            }
+          ]
         },
         "writerOpts": {
           "commitsSort": ["subject", "scope"]
